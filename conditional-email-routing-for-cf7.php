@@ -38,7 +38,7 @@ function cf7_email_routing_settings_page() {
         
         <?php //$form = WPCF7_ContactForm::get_instance(22); ?>
         <style>
-			tbody th, thead tr, tbody > tr, tbody > tr > td {
+			thead th, thead tr, tbody > trm, tbody > tr > td {
 			  border: 1px solid black;
 			  border-collapse: collapse;
 			  
@@ -50,6 +50,10 @@ function cf7_email_routing_settings_page() {
 			}
 			tbody ul li:last-child {
 				border-bottom: 0;
+			}
+			.cercf7-btn-disabled {
+				pointer-events: none;
+				opacity: 0.6
 			}
 		</style>
        
@@ -100,13 +104,13 @@ function cf7_email_routing_settings_page() {
 			
 			print_r($rules);
 			echo '<br>';
-			echo json_encode($rules[22]);
+			echo json_encode($rules);
 		}
 		
 		?>
        
         <select name="cercf7_contact_form" id="cercf7_contact_form">
-			<option value="">--Select Form--</option><?php
+			<option value="xxx">--Select Form--</option><?php
 			$dbValue = get_option('field-name'); //example!
 			$posts = get_posts(array(
 				'post_type'     => 'wpcf7_contact_form',
@@ -117,15 +121,15 @@ function cf7_email_routing_settings_page() {
 			} ?>
 		</select>
 		<select name="cercf7_form_fields" disabled form-id="" id="cercf7_form_fields">
-			<option>-Select Field-</option>
+			<option value="">-Select Field-</option>
 		</select>
-       <a href="#" id="cercf7_add_rule">Add Rule</a>
+       <a href="#" id="cercf7_add_rule" class="cercf7-btn-disabled">Add Rule</a>
        <form action="" method="post">
 		   <table style="border: 1px solid #000; border-collapse: collapse;">
 				<thead>
 					<tr>
 						<th>
-							Field Name
+							Form/Field
 						</th>
 						<th>
 							Conditions
@@ -133,8 +137,8 @@ function cf7_email_routing_settings_page() {
 						<th>Action</th>
 					</tr>
 				</thead>
-				<tbody>
-					<tr>
+				<tbody id="cercf7_rule_rows">
+					<!--<tr>
 						<td>
 							<p>Form name: <b>Contact form 1</b></p>
 							If <b>Department</b>
@@ -182,7 +186,7 @@ function cf7_email_routing_settings_page() {
 							<a href="#">+ Add Condition</a>
 						</td>
 						<td><a href="#">Delete</a></td>
-					</tr>
+					</tr>-->
 					
 				</tbody>
 			</table>
@@ -309,7 +313,7 @@ add_action('wp_ajax_cercf7_get_form_fields', 'cercf7_get_form_fields_cb');
 function cercf7_get_form_fields_cb(){
 	$form_id = $_POST['form_ID'];
 
-	echo '<option>-Select Field-</option>';
+	echo '<option value="">-Select Field-</option>';
 	
 	if($form_id != ''){
 		
@@ -332,7 +336,7 @@ function cercf7_add_rule_html_cb(){
 	$form_id = $_POST['form_ID'];
 	$form_field = $_POST['form_field'];
 	
-	if($form_id != ''):
+	if($form_id != '' && $form_field != ''):
 	
 	$form = WPCF7_ContactForm::get_instance($form_id);
 
@@ -346,42 +350,39 @@ function cercf7_add_rule_html_cb(){
 	?>
 	<tr>
 		<td>
-			<p>Form name: <b><?php echo esc_html($form->title()); ?></b></p>
-			Field Name <b><?php echo esc_html($form_field); ?></b>
+			<p>Form: <b><?php echo esc_html($form->title()); ?></b></p>
+			Field: <b><?php echo esc_html($form_field); ?></b>
 			<input type="hidden" value="<?php echo esc_attr($form_id); ?>" name="cercf7_selected_form_id[]">
 			<input type="hidden" value="<?php echo esc_attr($form_field); ?>" name="cercf7_selected_field_<?php echo esc_attr($form_id); ?>_[]">
 		</td>
 		<td>
 			<ul>
 			<?php 
-				function cercf7_field_type(){
-					$value_field_html = '';
-					if( $field_type == 'select' ){
+				$value_field_html = '';
+				if( $field_type == 'select' ){
 
-						$value_field_html = '<select name="cercf7_'.esc_attr($form_id).'_'.esc_attr($form_field).'_value[]">';
-							$value_field_html .= '<option value="">-Select value-</option>';
+					$value_field_html = '<select name="cercf7_'.esc_attr($form_id).'_'.esc_attr($form_field).'_value[]">';
+						$value_field_html .= '<option value="">-Select value-</option>';
 
-							$select_field_values = $tags[$tag_index]['values'];
-							if(is_array($select_field_values)){
-								foreach($select_field_values as $select_field_value){
-									$value_field_html .= '<option value="'.esc_html($select_field_value).'">'.esc_html($select_field_value).'</option>';
-								}
+						$select_field_values = $tags[$tag_index]['values'];
+						if(is_array($select_field_values)){
+							foreach($select_field_values as $select_field_value){
+								$value_field_html .= '<option value="'.esc_html($select_field_value).'">'.esc_html($select_field_value).'</option>';
 							}
+						}
 
-						$value_field_html .= '</select>';
+					$value_field_html .= '</select>';
 
-					}else{
-						$value_field_html = '<input type="text" name="cercf7_'.esc_attr($form_id).'_'.esc_attr($form_field).'_value[]" value="">';
-					}
-					
-					echo $value_field_html;
+				}else{
+					$value_field_html = '<input type="text" name="cercf7_'.esc_attr($form_id).'_'.esc_attr($form_field).'_value[]" value="">';
 				}
+					
 				?>
 				<!--Hidden rule start-->
-				<li class="duplicate_field" style="display:none">Value == <?php echo  ?> <!--<input type="text" name="cercf7_<?php echo esc_attr($form_id); ?>_<?php echo esc_attr($form_field); ?>_value[]" value="">--> Mail to <input type="text" name="cercf7_<?php echo esc_attr($form_id); ?>_<?php echo esc_attr($form_field); ?>_mail[]" value="" placeholder="xx@example.com"></li>
+				<li class="duplicate_field" style="display:none">Value == <?php echo $value_field_html; ?> <!--<input type="text" name="cercf7_<?php echo esc_attr($form_id); ?>_<?php echo esc_attr($form_field); ?>_value[]" value="">--> Mail to <input type="text" name="cercf7_<?php echo esc_attr($form_id); ?>_<?php echo esc_attr($form_field); ?>_mail[]" value="" placeholder="xx@example.com"></li>
 				<!--Hidden rule end-->
 				
-				<li>Value == <input type="text" name="cercf7_<?php echo esc_attr($form_id); ?>_<?php echo esc_attr($form_field); ?>_value[]" value=""> Mail to <input type="text" name="cercf7_<?php echo esc_attr($form_id); ?>_<?php echo esc_attr($form_field); ?>_mail[]" value="" placeholder="xx@example.com"></li>
+				<li>Value == <?php echo $value_field_html; ?> <!--<input type="text" name="cercf7_<?php //echo esc_attr($form_id); ?>_<?php echo esc_attr($form_field); ?>_value[]" value="">--> Mail to <input type="text" name="cercf7_<?php echo esc_attr($form_id); ?>_<?php echo esc_attr($form_field); ?>_mail[]" value="" placeholder="xx@example.com"></li>
 				
 			</ul>
 			<a href="#">+ Add Condition</a>
