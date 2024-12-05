@@ -1,9 +1,9 @@
 === Conditional Email Routing For Contact Form 7 ===
-Contributors: mdraihan1443
-Tags: contact form 7, email routing, conditional email, email recipient
+Contributors: raihan143
+Tags: contact form 7, email routing, conditional email, email recipient, contact form 7 addon
 Requires at least: 5.0
-Tested up to: 6.3
-Requires PHP: 7.2
+Tested up to: 6.7
+Requires PHP: 7.4
 Stable tag: 1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
