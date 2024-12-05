@@ -71,14 +71,14 @@ class CERCF7_Conditional_Email_Routing {
 							$value = strtolower($value);
 							if ( isset( $routing[$value] ) ) {
 								$recipient[] = $routing[$value];
-								//break; //Disallow multiple
+								break; //Do not allow multiple
 							}
 						}
 					}else{
 						$recipient[] = $routing[$posted_field];
 					}
 
-					//break; //Disallow multiple
+					break; //Do not allow multiple
 				}
 			}
 		}
