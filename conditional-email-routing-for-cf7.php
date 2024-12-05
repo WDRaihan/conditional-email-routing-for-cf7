@@ -1,10 +1,13 @@
 <?php
 /**
- * Plugin Name: CF7 Conditional Email Routing
+ * Plugin Name: Conditional Email Routing For Contact Form 7
  * Description: Routes email to different recipients based on form field values.
  * Version: 1.0
- * Author: Your Name
+ * Author: Raihan
+ * License: GPL-2.0+
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain: conditional-email-routing
+ * Domain Path: /languages
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,6 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'CERCF7_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CERCF7_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+
+/**
+ * Load plugin text domain for translations
+ */
+add_action( 'plugins_loaded', 'cercf7_load_textdomain' );
+function cercf7_load_textdomain(){
+	load_plugin_textdomain( 'conditional-email-routing', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+}
 
 /**
  * Check if Contact Form 7 is active

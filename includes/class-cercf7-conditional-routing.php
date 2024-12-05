@@ -29,7 +29,6 @@ class CERCF7_Conditional_Email_Routing {
             '1.0',
             true
         );
-        wp_localize_script( 'cercf7-script', 'cercf7_vars', [ 'ajax_url' => admin_url( 'admin-ajax.php' ) ] );
     }
 
     public function apply_conditional_routing( $components, $contact_form, $submission ) {
@@ -127,7 +126,7 @@ class CERCF7_Conditional_Email_Routing {
         </p>
         <p>
         	<strong><?php _e( 'Example:', 'conditional-email-routing' ); ?></strong><br>
-        	<code>If 'department' == 'Sales' Mail To 'sales@example.com'</code>
+        	<code><?php echo esc_html("If 'department' == 'Sales' Mail To 'sales@example.com'"); ?></code>
         </p>
         
         <!--Routing conditions-->
