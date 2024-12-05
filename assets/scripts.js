@@ -54,7 +54,14 @@ jQuery(document).ready(function(){
 					form_field: formField,
 				},
 				success: function(response){
-					jQuery('#cercf7_rule_rows').append(response);
+					var theFormRows = jQuery('#cercf7_rule_rows');
+					
+					if( theFormRows.find('.cercf7_form_'+formID+'_row').length > 0 ){
+						jQuery(response).insertAfter('#cercf7_rule_rows .cercf7_form_'+formID+'_row:last');
+					}
+					else {
+						jQuery('#cercf7_rule_rows').append('<tr id="cercf7_form_'+formID+'_row">'+response+'</tr>');
+					}
 				}
 			});
 		} else{

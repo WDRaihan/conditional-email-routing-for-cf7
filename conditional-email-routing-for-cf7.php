@@ -7,243 +7,13 @@
  */
 //prefix cercf7
 // Hook into WordPress Admin Menu
-add_action( 'admin_menu', 'cf7_conditional_email_routing_menu' );
 add_action( 'admin_enqueue_scripts', 'enqueue_admin_scripts' );
 function enqueue_admin_scripts(){
 	wp_enqueue_script('cercf7-script', plugin_dir_url(__FILE__).'assets/scripts.js', array('jquery'), null, true);
 	wp_localize_script('cercf7-script', 'cercf7_vars', array('ajax_url'=>admin_url('admin-ajax.php')));
 }
-function cf7_conditional_email_routing_menu() {
-    add_menu_page(
-        'CF7 Conditional Email Routing', // Page Title
-        'CF7 Email Routing',             // Menu Title
-        'manage_options',                // Capability
-        'cf7-email-routing',             // Menu Slug
-        'cf7_email_routing_settings_page'// Callback
-    );
-}
 
-// Admin settings page
-function cf7_email_routing_settings_page() {
-    ?>
-    <div class="wrap">
-        <h1>CF7 Conditional Email Routing</h1>
-        <form method="post" action="options.php">
-            <?php
-            settings_fields( 'cf7_email_routing_group' );
-            do_settings_sections( 'cf7_email_routing' );
-            submit_button();
-            ?>
-        </form>
-        
-        <?php //$form = WPCF7_ContactForm::get_instance(22); ?>
-        <style>
-			thead th, thead tr, tbody > trm, tbody > tr > td {
-			  border: 1px solid black;
-			  border-collapse: collapse;
-			  
-			}
-			tbody ul li {
-				border-bottom: 1px solid black;
-				padding: 5px;
-				padding-bottom: 10px;
-			}
-			tbody ul li:last-child {
-				border-bottom: 0;
-			}
-			.cercf7-btn-disabled {
-				pointer-events: none;
-				opacity: 0.6
-			}
-		</style>
-       
-       
-       <?php
-		$rules = [];
-		$mailto_logics = [];
-		if(isset($_POST['cercf7_selected_form_id'])){
-			$selected_forms = $_POST['cercf7_selected_form_id'];
-			if(is_array($selected_forms)){
-				$selected_forms = array_unique($selected_forms);
-				
-				//Get forms
-				foreach($selected_forms as $selected_form){
-					
-					$form_fields = $_POST['cercf7_selected_field_'.$selected_form.'_'];
-					$form_fields = array_unique($form_fields);
-					
-					//Get fields
-					foreach($form_fields as $form_field){
-						
-						//Get mail logics
-						if( isset($_POST['cercf7_'.$selected_form.'_'.$form_field.'_value']) ){
-							
-							$selected_field_values = $_POST['cercf7_'.$selected_form.'_'.$form_field.'_value'];
-							$selected_field_mailto = $_POST['cercf7_'.$selected_form.'_'.$form_field.'_mail'];
-							
-							if(is_array($selected_field_values) && is_array($selected_field_mailto)) :
-							foreach($selected_field_values as $k=>$selected_field_value){
-								
-								if(!empty($selected_field_value) && !empty($selected_field_mailto[$k])){
-									
-									//$mailto_logics[$selected_field_value] = $selected_field_mailto[$k];
-									
-									$rules[$selected_form][$form_field][$selected_field_value] = $selected_field_mailto[$k];
-								}
-								
-							}
-							endif;
-						}
-						
-						//Set rulse
-						//$rules[$selected_form][$form_field] = array_unique($mailto_logics);
-					}
-					
-				}
-			}
-			
-			print_r($rules);
-			echo '<br>';
-			echo json_encode($rules);
-		}
-		
-		?>
-       
-        <select name="cercf7_contact_form" id="cercf7_contact_form">
-			<option value="xxx">--Select Form--</option><?php
-			$dbValue = get_option('field-name'); //example!
-			$posts = get_posts(array(
-				'post_type'     => 'wpcf7_contact_form',
-				'numberposts'   => -1
-			));
-			foreach ( $posts as $p ) {
-				echo '<option value="'.$p->ID.'"'.selected($p->ID,$dbValue,false).'>'.$p->post_title.' ('.$p->ID.')</option>';
-			} ?>
-		</select>
-		<select name="cercf7_form_fields" disabled form-id="" id="cercf7_form_fields">
-			<option value="">-Select Field-</option>
-		</select>
-       <a href="#" id="cercf7_add_rule" class="cercf7-btn-disabled">Add Rule</a>
-       <form action="" method="post">
-		   <table style="border: 1px solid #000; border-collapse: collapse;">
-				<thead>
-					<tr>
-						<th>
-							Form/Field
-						</th>
-						<th>
-							Conditions
-						</th>
-						<th>Action</th>
-					</tr>
-				</thead>
-				<tbody id="cercf7_rule_rows">
-					<!--<tr>
-						<td>
-							<p>Form name: <b>Contact form 1</b></p>
-							If <b>Department</b>
-							<input type="hidden" value="22" name="cercf7_selected_form_id[]">
-							<input type="hidden" value="department" name="cercf7_selected_field_22_[]">
-						</td>
-						<td>
-							<ul>
-								<li>Value == <input type="text" name="cercf7_22_department_value[]" value="HR"> Mail to <input type="text" name="cercf7_22_department_mail[]" value="hr@example.com"></li>
-								<li>Value == <input type="text" name="cercf7_22_department_value[]" value="Sales"> Mail to <input type="text" name="cercf7_22_department_mail[]" value="sales@example.com"></li>
-							</ul>
-							<a href="#">+ Add Condition</a>
-						</td>
-						<td><a href="#">Delete</a></td>
-					</tr>
-					
-					<tr>
-						<td>
-							<p>Form name: <b>Subscription form</b></p>
-							If <b>Your name</b>
-							<input type="hidden" value="27" name="cercf7_selected_form_id[]">
-							<input type="hidden" value="your-name" name="cercf7_selected_field_27_[]">
-						</td>
-						<td>
-							<ul>
-								<li>Value == <input type="text" name="cercf7_27_your-name_value[]" value="Raihan"> Mail to <input type="text" name="cercf7_27_your-name_mail[]" value="raihan@example.com"></li>
-								<li>Value == <input type="text" name="cercf7_27_your-name_value[]" value="Tahim"> Mail to <input type="text" name="cercf7_27_your-name_mail[]" value="tahim@example.com"></li>
-							</ul>
-						</td>
-						<td><a href="#">Delete</a></td>
-					</tr>
-					
-					<tr>
-						<td>
-							<p>Form name: <b>Contact form 1</b></p>
-							If <b>Dropd</b>
-							<input type="hidden" value="22" name="cercf7_selected_form_id[]">
-							<input type="hidden" value="dropd" name="cercf7_selected_field_22_[]">
-						</td>
-						<td>
-							<ul>
-								<li>Value == <input type="text" name="cercf7_22_dropd_value[]" value="xx"> Mail to <input type="text" name="cercf7_22_dropd_mail[]" value="xx@example.com"></li>
-								<li>Value == <input type="text" name="cercf7_22_dropd_value[]" value="yy"> Mail to <input type="text" name="cercf7_22_dropd_mail[]" value="yy@example.com"></li>
-							</ul>
-							<a href="#">+ Add Condition</a>
-						</td>
-						<td><a href="#">Delete</a></td>
-					</tr>-->
-					
-				</tbody>
-			</table>
-       		<button>Save</button>
-        </form>
-    </div>
-    <?php
-}
 
-// Register Settings
-add_action( 'admin_init', 'cf7_email_routing_settings' );
-
-function cf7_email_routing_settings() {
-    register_setting( 'cf7_email_routing_group', 'cf7_routing_conditions' );
-
-    add_settings_section(
-        'cf7_routing_conditions_section',
-        'Routing Conditions',
-        'cf7_routing_conditions_section_callback',
-        'cf7_email_routing'
-    );
-
-    add_settings_field(
-        'cf7_routing_conditions_field',
-        'Conditional Routing Rules (JSON format)',
-        'cf7_routing_conditions_field_callback',
-        'cf7_email_routing',
-        'cf7_routing_conditions_section'
-    );
-
-    add_settings_field(
-        'cf7_routing_conditions_multiple',
-        'Conditional Routing Rules (JSON format) 2',
-        'cf7_routing_conditions_multiple_callback',
-        'cf7_email_routing',
-        'cf7_routing_conditions_section'
-    );
-}
-
-function cf7_routing_conditions_section_callback() {
-    echo 'Specify the conditions in JSON format. Example:<br><code>{"department": {"Sales": "sales@example.com", "Support": "support@example.com"}}</code>';
-}
-
-function cf7_routing_conditions_field_callback() {
-    $conditions = get_option( 'cf7_routing_conditions', '{}' );
-    echo '<textarea name="cf7_routing_conditions" rows="10" cols="50" class="large-text">' . esc_attr( $conditions ) . '</textarea>';
-}
-
-function cf7_routing_conditions_multiple_callback() {
-	
-	//print_r( get_option( 'cf7_routing_conditions_dd', '{}' ));
-	
-	
-	?>
-	
-	<?php
-}
 
 // Apply the custom filter to route emails
 add_filter( 'wpcf7_mail_components', 'cercf7_conditional_email_routing', 10, 3 );
@@ -287,14 +57,14 @@ function cercf7_conditional_email_routing( $components, $contact_form, $that ) {
 					foreach($posted_field as $k=>$value){
 						if ( isset( $routing[$value] ) ) {
 							$recipient[] = $routing[$value];
-							break;
+							//break; //Disallow multiple
 						}
 					}
 				}else{
 					$recipient[] = $routing[$posted_field];
 				}
                 
-                break;
+                //break; //Disallow multiple
             }
         }
     }
@@ -309,7 +79,7 @@ function cercf7_conditional_email_routing( $components, $contact_form, $that ) {
 }
 
 //Set form field
-add_action('wp_ajax_cercf7_get_form_fields', 'cercf7_get_form_fields_cb');
+//add_action('wp_ajax_cercf7_get_form_fields', 'cercf7_get_form_fields_cb');
 function cercf7_get_form_fields_cb(){
 	$form_id = $_POST['form_ID'];
 
@@ -331,7 +101,7 @@ function cercf7_get_form_fields_cb(){
 }
 
 //Set rule html
-add_action('wp_ajax_cercf7_add_rule_html', 'cercf7_add_rule_html_cb');
+//add_action('wp_ajax_cercf7_add_rule_html', 'cercf7_add_rule_html_cb');
 function cercf7_add_rule_html_cb(){
 	$form_id = $_POST['form_ID'];
 	$form_field = $_POST['form_field'];
@@ -348,7 +118,7 @@ function cercf7_add_rule_html_cb(){
 		$field_type = $tags[$tag_index]['type'];
 	}
 	?>
-	<tr>
+	<tr class="cercf7_form_<?php echo esc_attr($form_id); ?>_row">
 		<td>
 			<p>Form: <b><?php echo esc_html($form->title()); ?></b></p>
 			Field: <b><?php echo esc_html($form_field); ?></b>
@@ -359,7 +129,7 @@ function cercf7_add_rule_html_cb(){
 			<ul>
 			<?php 
 				$value_field_html = '';
-				if( $field_type == 'select' ){
+				if( $field_type == 'select' || $field_type == 'checkbox' || $field_type == 'radio' ){
 
 					$value_field_html = '<select name="cercf7_'.esc_attr($form_id).'_'.esc_attr($form_field).'_value[]">';
 						$value_field_html .= '<option value="">-Select value-</option>';
@@ -393,4 +163,379 @@ function cercf7_add_rule_html_cb(){
 	endif;
 	
 	die();
+}
+
+
+// Add a custom tab to the CF7 editor
+add_filter( 'wpcf7_editor_panels', 'cf7_add_conditional_routing_tab' );
+
+function cf7_add_conditional_routing_tab( $panels ) {
+    $panels['conditional-email-routing'] = array(
+        'title'    => __( 'Conditional Email Routing', 'cf7-conditional-email-routing' ),
+        'callback' => 'cf7_conditional_routing_tab_content',
+    );
+    return $panels;
+}
+
+// Content for the custom tab
+function cf7_conditional_routing_tab_content_( $post ) {
+    // Retrieve existing settings for the current form
+    $form_id = $post->id();
+    $routing_conditions = get_post_meta( $form_id, '_cf7_routing_conditions', true );
+    ?>
+    <h2><?php _e( 'Conditional Email Routing', 'cf7-conditional-email-routing' ); ?></h2>
+    <p>
+        <?php _e( 'Define email routing rules based on form field values in JSON format.', 'cf7-conditional-email-routing' ); ?><br>
+        <strong><?php _e( 'Example:', 'cf7-conditional-email-routing' ); ?></strong><br>
+        <code>{"department": {"Sales": "sales@example.com", "Support": "support@example.com"}}</code>
+    </p>
+    <style>
+		.cercf7-field {
+			width: 20%;
+		}
+
+		.cercf7-conditions {
+			width: 80%;
+		}
+
+		.cercf7-rountings {
+			display: flex;
+			background: #fff;
+			padding: 10px
+		}
+
+		.cercf7-conditions ul {
+			margin-top: 0;
+		}
+	</style>
+   
+   
+<!--
+    <div class="cercf7-rountings">
+    	<div class="cercf7-field">
+    		<label for="">If</label>
+    		<select name="cercf7_selected_field[]" id="">
+    			<option value="">-Select field-</option>
+    			<?php
+				$form_id = $_GET['post'];
+
+				if($form_id != ''){
+
+					$form = WPCF7_ContactForm::get_instance($form_id);
+					$tags = $form->scan_form_tags();
+
+					foreach ( $tags as $k=>$value ) {
+						if(!empty($value['name'])){
+							echo '<option value="'.$value['name'].'">'.$value['name'].'</option>';
+						}
+					}
+				}
+				?>
+    		</select>
+    	</div>
+    	<div class="cercf7-conditions">
+    		<ul>
+				<li>Value == <input type="text" name="cercf7_department_value[]" value="HR"> Mail to <input type="text" name="cercf7_department_mail[]" value="hr@example.com"></li>
+				<li>Value == <input type="text" name="cercf7_department_value[]" value="Sales"> Mail to <input type="text" name="cercf7_department_mail[]" value="sales@example.com"></li>
+			</ul>
+			<a href="#">+ Add Condition</a>
+    	</div>
+    </div>
+-->
+   
+   <div class="cercf7-rountings">
+    <div class="cercf7-field">
+        <label for="">If</label>
+        <select name="cercf7_selected_field[]" id="cercf7_selected_field">
+            <option value="">-Select field-</option>
+            <?php
+            $form_id = $_GET['post'];
+
+            if ($form_id != '') {
+                $form = WPCF7_ContactForm::get_instance($form_id);
+                $tags = $form->scan_form_tags();
+
+                foreach ($tags as $k => $value) {
+                    if (!empty($value['name'])) {
+                        echo '<option value="' . esc_attr($value['name']) . '">' . esc_html($value['name']) . '</option>';
+                    }
+                }
+            }
+            ?>
+        </select>
+    </div>
+    <div class="cercf7-conditions">
+        <ul id="cercf7_conditions_list">
+            <li>
+                Value == <input type="text" name="cercf7_initial_value[0]" value="HR"> 
+                Mail to <input type="text" name="cercf7_initial_mail[0]" value="hr@example.com">
+            </li>
+        </ul>
+        <a href="#" id="cercf7_add_condition">+ Add Condition</a>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const addConditionButton = document.getElementById('cercf7_add_condition');
+    const conditionsList = document.getElementById('cercf7_conditions_list');
+    const fieldSelect = document.getElementById('cercf7_selected_field');
+
+    // Function to update all existing condition names based on selected field
+    function updateConditionNames() {
+        const selectedField = fieldSelect.value;
+        if (!selectedField) {
+            return;
+        }
+
+        // Update the name attributes of all inputs
+        const conditions = conditionsList.querySelectorAll('li');
+        conditions.forEach((condition, index) => {
+            const inputs = condition.querySelectorAll('input');
+            if (inputs.length === 2) {
+                inputs[0].name = `cercf7_${selectedField}_value[${index}]`;
+                inputs[1].name = `cercf7_${selectedField}_mail[${index}]`;
+            }
+        });
+    }
+
+    // Event listener for adding a new condition
+    addConditionButton.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const selectedField = fieldSelect.value;
+        if (!selectedField) {
+            alert('Please select a field first.');
+            return;
+        }
+
+        // Get the current number of conditions for this field
+        const conditionIndex = conditionsList.querySelectorAll('li').length;
+
+        // Create a new list item
+        const newCondition = document.createElement('li');
+        newCondition.innerHTML = `
+            Value == <input type="text" name="cercf7_${selectedField}_value[${conditionIndex}]" value=""> 
+            Mail to <input type="text" name="cercf7_${selectedField}_mail[${conditionIndex}]" value="">
+        `;
+
+        // Append the new condition to the list
+        conditionsList.appendChild(newCondition);
+    });
+
+    // Event listener for changing the selected field
+    fieldSelect.addEventListener('change', function () {
+        updateConditionNames();
+    });
+});
+</script>
+
+   
+    <?php print_r(get_post_meta( 22, '_cf7_routing_conditions', true )); ?>
+	
+				
+    <?php
+}
+
+
+function cf7_conditional_routing_tab_content( $post ){
+	// Retrieve existing settings for the current form
+    $form_id = $post->id();
+    $routing_conditions = get_post_meta( $form_id, '_cf7_routing_conditions', true );
+    ?>
+    <h2><?php _e( 'Conditional Email Routing', 'cf7-conditional-email-routing' ); ?></h2>
+    <p>
+        <?php _e( 'Define email routing rules based on form field values in JSON format.', 'cf7-conditional-email-routing' ); ?><br>
+        <strong><?php _e( 'Example:', 'cf7-conditional-email-routing' ); ?></strong><br>
+        <code>{"department": {"Sales": "sales@example.com", "Support": "support@example.com"}}</code>
+    </p>
+    <style>
+		.cercf7-field {
+			width: 20%;
+		}
+
+		.cercf7-conditions {
+			width: 80%;
+		}
+
+		.cercf7-rountings {
+			display: flex;
+			background: #fff;
+			padding: 10px
+		}
+
+		.cercf7-conditions ul {
+			margin-top: 0;
+		}
+	</style>
+	
+	<div class="cercf7-rountings">
+    <div id="cercf7_roles">
+        <div class="cercf7-role">
+            <h3>Condition Group</h3>
+            <div class="cercf7-field">
+                <label for="">If</label>
+                <select name="cercf7_selected_field[]" class="cercf7_selected_field">
+                    <option value="">-Select field-</option>
+                    <?php
+                    $form_id = $_GET['post'];
+
+                    if ($form_id != '') {
+                        $form = WPCF7_ContactForm::get_instance($form_id);
+                        $tags = $form->scan_form_tags();
+
+                        foreach ($tags as $k => $value) {
+                            if (!empty($value['name'])) {
+                                echo '<option value="' . esc_attr($value['name']) . '">' . esc_html($value['name']) . '</option>';
+                            }
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="cercf7-conditions">
+                <ul class="cercf7_conditions_list">
+                    <li>
+                        Value == <input type="text" name="cercf7_value[0]" value=""> 
+                        Mail to <input type="text" name="cercf7_mail[0]" value="">
+                    </li>
+                </ul>
+                <a href="#" class="cercf7_add_condition">+ Add Condition</a>
+            </div>
+        </div>
+    </div>
+    <a href="#" id="cercf7_add_role">+ Add Role</a>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const addRoleButton = document.getElementById('cercf7_add_role');
+    const rolesContainer = document.getElementById('cercf7_roles');
+
+    // Add a new role
+    addRoleButton.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const newRole = document.createElement('div');
+        newRole.classList.add('cercf7-role');
+        newRole.innerHTML = `
+            <h3>Condition Group</h3>
+            <div class="cercf7-field">
+                <label for="">If</label>
+                <select name="cercf7_selected_field[]" class="cercf7_selected_field">
+                    <option value="">-Select field-</option>
+                    ${rolesContainer.querySelector('.cercf7_selected_field').innerHTML}
+                </select>
+            </div>
+            <div class="cercf7-conditions">
+                <ul class="cercf7_conditions_list">
+                    <li>
+                        Value == <input type="text" name="" value=""> 
+                        Mail to <input type="text" name="" value="">
+                    </li>
+                </ul>
+                <a href="#" class="cercf7_add_condition">+ Add Condition</a>
+            </div>
+        `;
+        rolesContainer.appendChild(newRole);
+
+        // Initialize dynamic behavior for the new role
+        initializeRoleLogic(newRole);
+    });
+
+    // Initialize dynamic behavior for a role
+    function initializeRoleLogic(role) {
+        const fieldSelect = role.querySelector('.cercf7_selected_field');
+        const conditionsList = role.querySelector('.cercf7_conditions_list');
+        const addConditionButton = role.querySelector('.cercf7_add_condition');
+
+        // Function to update names dynamically
+        function updateConditionNames() {
+            const selectedField = fieldSelect.value;
+            const conditions = conditionsList.querySelectorAll('li');
+            conditions.forEach((condition, index) => {
+                const inputs = condition.querySelectorAll('input');
+                if (inputs.length === 2) {
+                    inputs[0].name = `cercf7_${selectedField}_value[${index}]`;
+                    inputs[1].name = `cercf7_${selectedField}_mail[${index}]`;
+                }
+            });
+        }
+
+        // Add condition dynamically
+        addConditionButton.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const selectedField = fieldSelect.value;
+            if (!selectedField) {
+                alert('Please select a field first.');
+                return;
+            }
+
+            const conditionIndex = conditionsList.querySelectorAll('li').length;
+
+            const newCondition = document.createElement('li');
+            newCondition.innerHTML = `
+                Value == <input type="text" name="cercf7_${selectedField}_value[${conditionIndex}]" value=""> 
+                Mail to <input type="text" name="cercf7_${selectedField}_mail[${conditionIndex}]" value="">
+            `;
+            conditionsList.appendChild(newCondition);
+        });
+
+        // Update names on field change
+        fieldSelect.addEventListener('change', function () {
+            updateConditionNames();
+        });
+
+        // Initialize names for existing conditions
+        updateConditionNames();
+    }
+
+    // Initialize existing roles
+    const roles = document.querySelectorAll('.cercf7-role');
+    roles.forEach(role => initializeRoleLogic(role));
+});
+
+</script>
+
+<?php print_r(get_post_meta( 22, '_cf7_routing_conditions', true )); ?>
+<?php
+}
+
+// Save the custom tab data when the form is saved
+add_action( 'wpcf7_save_contact_form', 'cf7_save_conditional_routing_settings' );
+
+function cf7_save_conditional_routing_settings( $contact_form ) {
+    $form_id = $contact_form->id();
+    if(isset($_POST['cercf7_selected_field'])){
+		$form_fields = $_POST['cercf7_selected_field'];
+		$form_fields = array_unique($form_fields);
+		$rules = [];
+		//Get fields
+		foreach($form_fields as $form_field){
+
+			//Get mail logics
+			if( isset($_POST['cercf7_'.$form_field.'_value']) ){
+
+				$selected_field_values = $_POST['cercf7_'.$form_field.'_value'];
+				$selected_field_mailto = $_POST['cercf7_'.$form_field.'_mail'];
+
+				if(is_array($selected_field_values) && is_array($selected_field_mailto)) :
+				foreach($selected_field_values as $k=>$selected_field_value){
+
+					if(!empty($selected_field_value) && !empty($selected_field_mailto[$k])){
+
+						$rules[$form_field][$selected_field_value] = $selected_field_mailto[$k];
+					}
+
+				}
+				endif;
+			}
+
+			//print_r($rules);
+		}
+		
+		update_post_meta( 22, '_cf7_routing_conditions', $rules );
+	}
 }
