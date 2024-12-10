@@ -32,8 +32,13 @@ function cercf7_check_dependencies() {
     if ( ! defined( 'WPCF7_PLUGIN' ) ) {
         add_action( 'admin_notices', 'cercf7_dependency_notice' );
     } else {
-        require_once CERCF7_PLUGIN_DIR . 'includes/class-cercf7-conditional-routing.php';
-        CERCF7_Conditional_Email_Routing::get_instance();
+		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+
+        if ( !is_plugin_active( 'conditional-email-routing-for-cf7-pro/conditional-email-routing-for-cf7-pro.php' ) ) {
+            // The pro version is not active
+            require_once CERCF7_PLUGIN_DIR . 'includes/class-cercf7-conditional-routing.php';
+        	CERCF7_Conditional_Email_Routing::get_instance();
+        }
     }
 }
 add_action( 'plugins_loaded', 'cercf7_check_dependencies' );

@@ -34,8 +34,8 @@ class CERCF7_Conditional_Email_Routing {
     public function apply_conditional_routing( $components, $contact_form, $submission ) {
         $form_id = $contact_form->id();
 		
-		$routing_enabled = get_post_meta( $form_id, '_cf7_routing_enabled', true );
-    	$use_default_email = get_post_meta( $form_id, '_cf7_use_default_email', true );
+		$routing_enabled = get_post_meta( $form_id, '_cercf7_routing_enabled', true );
+    	$use_default_email = get_post_meta( $form_id, '_cercf7_use_default_email', true );
 		
 		// If conditional routing is disabled, return the original mail
 		if ( $routing_enabled !== '1' ) {
@@ -49,7 +49,7 @@ class CERCF7_Conditional_Email_Routing {
 		}
 
 		// Get routing conditions from the admin settings
-		$conditions = !empty(get_post_meta( $form_id, '_cf7_routing_conditions', true )) ? get_post_meta( $form_id, '_cf7_routing_conditions', true ) : '';
+		$conditions = !empty(get_post_meta( $form_id, '_cercf7_routing_conditions', true )) ? get_post_meta( $form_id, '_cercf7_routing_conditions', true ) : '';
 
 		$recipient = [];
 		
@@ -103,9 +103,9 @@ class CERCF7_Conditional_Email_Routing {
     public function render_custom_tab_content( $post ) {
         $form_id = $post->id();
 		
-		$routing_enabled = get_post_meta( $form_id, '_cf7_routing_enabled', true );
-		$use_default_email = get_post_meta( $form_id, '_cf7_use_default_email', true );
-		$routing_conditions = !empty(get_post_meta( $form_id, '_cf7_routing_conditions', true )) ? get_post_meta( $form_id, '_cf7_routing_conditions', true ) : '';
+		$routing_enabled = get_post_meta( $form_id, '_cercf7_routing_enabled', true );
+		$use_default_email = get_post_meta( $form_id, '_cercf7_use_default_email', true );
+		$routing_conditions = !empty(get_post_meta( $form_id, '_cercf7_routing_conditions', true )) ? get_post_meta( $form_id, '_cercf7_routing_conditions', true ) : '';
         ?>
         <h2><?php esc_html_e( 'Conditional Email Routing', 'conditional-email-routing' ); ?></h2>
         
@@ -138,7 +138,7 @@ class CERCF7_Conditional_Email_Routing {
         <div class="cercf7-rountings">
             <div class="cercf7-field">
                 <label for="cercf7_selected_field"><?php esc_html_e( 'If', 'conditional-email-routing' ); ?></label>
-                <select name="cercf7_selected_field[]" id="cercf7_selected_field">
+                <select name="cercf7_selected_field[]" class="cercf7_selected_field">
                     <option value=""><?php esc_html_e( '-Select field-', 'conditional-email-routing' ); ?></option>
                     <?php
                     $tags = $this->get_form_tags( $form_id );
@@ -150,7 +150,7 @@ class CERCF7_Conditional_Email_Routing {
             </div>
             
             <div class="cercf7-conditions">
-                <ul id="cercf7_conditions_list">
+                <ul class="cercf7_conditions_list">
                    <?php 
 					if( is_array($routings) ) :
 					$index = 0;
@@ -171,6 +171,7 @@ class CERCF7_Conditional_Email_Routing {
        
         </div>
         <?php 
+		break;
 		endforeach; 
 		endif; 
 		?>
@@ -183,15 +184,15 @@ class CERCF7_Conditional_Email_Routing {
 		
 		// Save checkbox values for enabling routing and using default email
 		if ( isset( $_POST['cercf7_routing_enabled'] ) ) {
-			update_post_meta( $form_id, '_cf7_routing_enabled', '1' );
+			update_post_meta( $form_id, '_cercf7_routing_enabled', '1' );
 		} else {
-			delete_post_meta( $form_id, '_cf7_routing_enabled' );
+			delete_post_meta( $form_id, '_cercf7_routing_enabled' );
 		}
 
 		if ( isset( $_POST['cercf7_use_default_email'] ) ) {
-			update_post_meta( $form_id, '_cf7_use_default_email', '1' );
+			update_post_meta( $form_id, '_cercf7_use_default_email', '1' );
 		} else {
-			delete_post_meta( $form_id, '_cf7_use_default_email' );
+			delete_post_meta( $form_id, '_cercf7_use_default_email' );
 		}
 		
         if ( isset( $_POST['cercf7_selected_field'] ) ) {
@@ -212,7 +213,7 @@ class CERCF7_Conditional_Email_Routing {
                 }
             }
 
-            update_post_meta( $form_id, '_cf7_routing_conditions', $rules );
+            update_post_meta( $form_id, '_cercf7_routing_conditions', $rules );
         }
     }
 
