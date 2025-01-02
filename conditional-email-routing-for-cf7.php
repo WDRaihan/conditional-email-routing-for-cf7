@@ -6,7 +6,7 @@
  * Author: Raihan
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain: conditional-email-routing
+ * Text Domain: conditional-email-routing-for-cf7
  * Domain Path: /languages
  */
 
@@ -22,7 +22,7 @@ define( 'CERCF7_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
  */
 add_action( 'plugins_loaded', 'cercf7_load_textdomain' );
 function cercf7_load_textdomain(){
-	load_plugin_textdomain( 'conditional-email-routing', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	load_plugin_textdomain( 'conditional-email-routing-for-cf7', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 }
 
 /**
@@ -51,9 +51,9 @@ function cercf7_dependency_notice() {
     <div class="notice notice-error">
         <p>
             <?php
-            esc_html_e( 
+            echo esc_html__( 
                 'Conditional Email Routing requires the Contact Form 7 plugin to be installed and activated. Please install and activate Contact Form 7 to use this plugin.', 
-                'conditional-email-routing' 
+                'conditional-email-routing-for-cf7' 
             );
             ?>
         </p>

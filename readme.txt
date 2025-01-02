@@ -1,5 +1,5 @@
 === Conditional Email Routing For Contact Form 7 ===
-Contributors: raihan143
+Contributors: wdraihan
 Tags: contact form 7, email routing, conditional email, email recipient, contact form 7 addon
 Requires at least: 5.0
 Tested up to: 6.7

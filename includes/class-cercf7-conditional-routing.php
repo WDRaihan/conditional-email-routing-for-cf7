@@ -94,7 +94,7 @@ class CERCF7_Conditional_Email_Routing {
 
     public function add_custom_tab( $panels ) {
         $panels['conditional-email-routing'] = [
-            'title'    => __( 'Conditional Email Routing', 'conditional-email-routing' ),
+            'title'    => __( 'Conditional Email Routing', 'conditional-email-routing-for-cf7' ),
             'callback' => [ $this, 'render_custom_tab_content' ],
         ];
         return $panels;
@@ -107,26 +107,26 @@ class CERCF7_Conditional_Email_Routing {
 		$use_default_email = get_post_meta( $form_id, '_cercf7_use_default_email', true );
 		$routing_conditions = !empty(get_post_meta( $form_id, '_cercf7_routing_conditions', true )) ? get_post_meta( $form_id, '_cercf7_routing_conditions', true ) : '';
         ?>
-        <h2><?php esc_html_e( 'Conditional Email Routing', 'conditional-email-routing' ); ?></h2>
+        <h2><?php echo esc_html__( 'Conditional Email Routing', 'conditional-email-routing-for-cf7' ); ?></h2>
         
         <!-- Enable/Disable Conditional Email Routing -->
 		<div class="cercf7-field">
-			<label for="cercf7_routing_enabled"><?php _e( 'Enable Conditional Email Routing', 'conditional-email-routing' ); ?></label>
+			<label for="cercf7_routing_enabled"><?php echo esc_html__( 'Enable Conditional Email Routing', 'conditional-email-routing-for-cf7' ); ?></label>
 			<input type="checkbox" name="cercf7_routing_enabled" id="cercf7_routing_enabled" value="1" <?php checked( $routing_enabled, '1' ); ?>>
 		</div>
 
 		<!-- Use Default Email Recipient -->
 		<div class="cercf7-field">
-			<label for="cercf7_use_default_email"><?php _e( 'Use Default Email as Recipient', 'conditional-email-routing' ); ?></label>
+			<label for="cercf7_use_default_email"><?php echo esc_html__( 'Use Default Email as Recipient', 'conditional-email-routing-for-cf7' ); ?></label>
 			<input type="checkbox" name="cercf7_use_default_email" id="cercf7_use_default_email" value="1" <?php checked( $use_default_email, '1' ); ?>>
 		</div>
         
         <p>
-            <?php esc_html_e( 'Define email routing rules based on form field values.', 'conditional-email-routing' ); ?>
+            <?php echo esc_html__( 'Define email routing rules based on form field values.', 'conditional-email-routing-for-cf7' ); ?>
         </p>
         <p>
-        	<strong><?php _e( 'Example:', 'conditional-email-routing' ); ?></strong><br>
-        	<code><?php echo esc_html("If 'department' == 'Sales' Mail To 'sales@example.com'"); ?></code>
+        	<strong><?php echo esc_html__( 'Example:', 'conditional-email-routing-for-cf7' ); ?></strong><br>
+        	<code><?php echo esc_html__("If 'department' == 'Sales' Mail To 'sales@example.com'", "conditional-email-routing-for-cf7"); ?></code>
         </p>
         
         <!--Routing conditions-->
@@ -137,9 +137,9 @@ class CERCF7_Conditional_Email_Routing {
 		?>
         <div class="cercf7-rountings">
             <div class="cercf7-field">
-                <label for="cercf7_selected_field"><?php esc_html_e( 'If', 'conditional-email-routing' ); ?></label>
+                <label for="cercf7_selected_field"><?php echo esc_html__( 'If', 'conditional-email-routing-for-cf7' ); ?></label>
                 <select name="cercf7_selected_field[]" class="cercf7_selected_field">
-                    <option value=""><?php esc_html_e( '-Select field-', 'conditional-email-routing' ); ?></option>
+                    <option value=""><?php echo esc_html__( '-Select field-', 'conditional-email-routing-for-cf7' ); ?></option>
                     <?php
                     $tags = $this->get_form_tags( $form_id );
                     foreach ( $tags as $tag ) {
@@ -157,8 +157,8 @@ class CERCF7_Conditional_Email_Routing {
 					foreach( $routings as $value => $email ) :  
 					?>
                     <li>
-                        Value == <input type="text" name="cercf7_<?php echo esc_attr( $field ); ?>_value[<?php echo esc_attr($index); ?>]" value="<?php echo esc_html( $value ); ?>"> 
-                        Mail to <input type="text" name="cercf7_<?php echo esc_attr( $field ); ?>_mail[<?php echo esc_attr($index); ?>]" value="<?php echo esc_attr( $email ); ?>">
+                        <?php echo esc_html__('Value ==', 'conditional-email-routing-for-cf7'); ?> <input type="text" name="cercf7_<?php echo esc_attr( $field ); ?>_value[<?php echo esc_attr($index); ?>]" value="<?php echo esc_html( $value ); ?>"> 
+                        <?php echo esc_html__('Mail to', 'conditional-email-routing-for-cf7'); ?> <input type="text" name="cercf7_<?php echo esc_attr( $field ); ?>_mail[<?php echo esc_attr($index); ?>]" value="<?php echo esc_attr( $email ); ?>">
                     </li>
                     <?php 
 					$index++;
@@ -166,7 +166,7 @@ class CERCF7_Conditional_Email_Routing {
 					endif; 
 					?>
                 </ul>
-                <a href="#" id="cercf7_add_condition">+ Add Condition</a>
+                <a href="#" id="cercf7_add_condition"><?php echo esc_html__('+ Add Condition', 'conditional-email-routing-for-cf7'); ?></a>
             </div>
        
         </div>
