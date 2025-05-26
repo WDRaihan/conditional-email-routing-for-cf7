@@ -1,23 +1,30 @@
 === Conditional Email Routing For Contact Form 7 ===
-Contributors: mdraihan1443
-Tags: contact form 7, email routing, conditional email, email recipient
-Requires at least: 5.0
-Tested up to: 6.3
-Requires PHP: 7.2
-Stable tag: 1.0
+Contributors: raihan143
+Tags: contact form 7, email routing, conditional email, email recipient, multiple recipients, contact form 7 addon, conditional logic, dynamic email, cf7 conditional, smart routing, contact form workflow, send to department, route email
+Tested up to: 6.8
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Route emails based on user input in Contact Form 7. Flexible and powerful conditional email routing for your WordPress forms.
+Routes email to different recipients based on form field values in Contact Form 7. Flexible and powerful conditional email routing for your Contact Form 7 forms.
 
 == Description ==
+
+Routes email to different recipients based on form field values in Contact Form 7. Flexible and powerful conditional email routing for your WordPress forms.
+
+👉 Demo Link: [Live Preview](https://cercf7.wdraihan.com/)
 
 **CF7 Conditional Email Routing** is a powerful add-on for the Contact Form 7 plugin. It allows you to dynamically route form submissions to different email addresses based on user input. This feature is ideal for businesses and organizations that need to send submissions to specific departments, teams, or individuals based on form field values.
 
 **Features:**
 * Create conditions to route emails dynamically.
+* Send email to different addresses depending on form selections.
 * Add multiple conditions for different form fields.
+* Prevent default email sending and fully control who receives which submissions.
 * Easy-to-use interface integrated directly into the Contact Form 7 editor.
+* Works seamlessly as a Contact Form 7 addon with conditional email routing logic.
+* Ideal for multi-department contact forms (e.g., Sales, Support, HR).
+* Acts as a smart Contact Form 7 addon for email recipient control and routing.
 * Supports complex field types, including checkboxes and dropdowns.
 * Fully customizable and lightweight.
 
@@ -53,9 +60,16 @@ The plugin is tested with the latest version of WordPress. Please ensure your si
 == Screenshots ==
 
 1. **Conditional Email Routing Tab**: Easily configure email routing conditions directly within the Contact Form 7 editor.
-2. **Define Routing Rules**: Add multiple conditions for routing emails to specific recipients.
 
 == Changelog ==
+
+= 1.2 - 26/May/2025 =
+
+Fixed a minor issue.
+
+= 1.1 - 15/Apr/2025 =
+
+Version compatibility check and minor code update.
 
 = 1.0 =
 * Initial release.
