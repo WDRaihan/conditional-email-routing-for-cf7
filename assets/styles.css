@@ -1,0 +1,136 @@
+#conditional-email-routing > h2 {
+	font-size: 24px !important;
+	font-weight: 600 !important;
+	margin-bottom: 21px !important;
+}
+
+.cercf7-field-checkbox {
+	margin-bottom: 15px;
+}
+
+.cercf7-field-checkbox label {
+	font-size: 15px;
+	font-weight: 500;
+	margin-left: 5px;
+	line-height: 23px;
+}
+
+.cercf7-rountings {
+	background: #fff;
+	padding: 25px;
+	border-radius: 6px;
+}
+
+.cercf7-role {
+	padding-bottom: 20px;
+	border-bottom: 1px solid #ddd;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	align-content: flex-start;
+	column-gap: 25px;
+	margin-bottom: 20px;
+	justify-content: space-between;
+}
+
+ul.cercf7_conditions_list {
+	margin-top: 0;
+	margin-left: 0;
+	padding-left: 0;
+}
+
+a.cercf7_add_condition.button {
+	float: right;
+}
+
+a.cercf7_remove_role {
+	display: block
+}
+
+.cercf7-role .cercf7-field label {
+	font-size: 15px;
+	font-weight: 500;
+	margin-right: 10px;
+	padding: 5px 10px;
+	border-radius: 50px;
+	border: 1px solid #ddd;
+}
+
+.cercf7-role .cercf7-field select.cercf7_selected_field {
+	height: 34px;
+}
+
+.cercf7_conditions_list li span {
+	font-size: 15px;
+	font-weight: 400;
+	padding: 0 10px;
+}
+
+.cercf7_conditions_list li input {
+	height: 34px;
+}
+
+.cercf7_conditions_list li {
+	margin-bottom: 15px;
+}
+
+a.cercf7_remove_role.button {
+	background: #ff1919;
+	color: #fff;
+	border-color: red;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+a.cercf7_add_condition.button {
+	float: right;
+	background: #fff;
+	color: #02bd02;
+	border-color: #02bd02;
+	font-size: 14px;
+	font-weight: 400;
+}
+
+a.cercf7_add_role.button {
+	background: #02bd02;
+	color: #fff;
+	border-color: #02bd02;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.cercf7-roles-header {
+	padding-bottom: 20px;
+	border-bottom: 1px solid #ddd;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	align-content: flex-start;
+	column-gap: 25px;
+	margin-bottom: 20px;
+	justify-content: space-between;
+	color: #000;
+	font-size: 15px;
+	font-weight: 500;
+}
+
+span.remove_condition {
+	color: red;
+	border: 1px solid red;
+	border-radius: 50px;
+	padding: 3px 6px !important;
+	margin-left: 10px;
+	cursor: pointer;
+	font-size: 12px !important;
+	line-height: 8px;
+}
+a.cercf7-pro-link {
+    color: #e73a3a;
+    display: block;
+}
+.cercf7-pro-box p {
+    color: #2d2df2;
+    font-size: 14px;
+}
